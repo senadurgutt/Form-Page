@@ -13,9 +13,19 @@ namespace Form_Page.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchString) //searchString  ürünler içinde arama yapmak için kullanılır
         {
-            return View(Repository.Products);
+            var products = Repository.Products;  //products, ürünleri saklayan bir değişkendir ve Repository.Products üzerinden alınır.
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                products = products.Where(p=> p.Name.Contains(searchString)).ToList();
+
+//                ürün listesini filtreler.products içindeki her bir ürünün Name(isim) özelliği, kullanıcının girdiği searchString ifadesini içeriyorsa, o ürün listede kalır.
+//                Contains(searchString): Arama terimi, ürün isminin içinde geçiyor mu diye kontrol eder.
+//                ToList(): Sonucu bir listeye dönüştürür.
+
+            }
+            return View(products);
         }
 
         public IActionResult Privacy()
