@@ -30,19 +30,24 @@ namespace Form_Page.Controllers
 
             if (!String.IsNullOrEmpty(category) && category != "0") 
             {
-                products = products.Where(p=>p.CategoryId ==int.Parse(category)).ToList();
+                products = products.Where(p=>p.CategoryId == int.Parse(category)).ToList();
 
 //                String.IsNullOrEmpty(category): Bu ifade, category değişkeninin boş(empty) veya null olup olmadığını kontrol eder. Eğer category boş değilse, kod çalışmaya devam eder.
 //                products = products.Where(p => p.CategoryId == int.Parse(category)).ToList();:
-
 //                products: Ürünlerin yer aldığı bir koleksiyondur.Bu ürünler muhtemelen bir veritabanından alınmıştır ve CategoryId alanına sahiptir(her ürünün bir kategori kimliği var).
 //                products.Where(...): LINQ sorgusu kullanılarak ürünler filtrelenir.Sorgu, CategoryId'si, kullanıcının seçtiği category değerine eşit olan ürünleri bulur.
 //                p.CategoryId == int.Parse(category): Bu ifade, her bir ürünün(p) CategoryId özelliği ile seçilen kategori değerini karşılaştırır.Kategori değeri bir string olarak geldiğinden, int.Parse(category) ifadesiyle sayıya dönüştürülür ve CategoryId ile kıyaslanır.
 
             }
 
-            ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
-            return View(products);
+            //ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name",category);
+            var model = new ProductViewModel
+            {
+                Products = products,
+                Categories = Repository.Categories,
+                SelectedCategory = category
+            };
+            return View(model);1
         }
 
         public IActionResult Privacy()
