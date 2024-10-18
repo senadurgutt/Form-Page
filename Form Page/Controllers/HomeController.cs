@@ -47,18 +47,19 @@ namespace Form_Page.Controllers
                 Categories = Repository.Categories,
                 SelectedCategory = category
             };
-            return View(model);1
+            return View(model);
         }
 
-        public IActionResult Privacy()
+        public IActionResult Create()
         {
+            ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
             return View();
         }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult Create(Product model)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            Repository.CreateProduct(model);
+            return RedirectToAction("Index"); // sayfanın view i çalışmıyor da index sayfasını döndürüyor.
         }
     }
 }

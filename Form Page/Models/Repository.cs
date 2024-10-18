@@ -8,10 +8,10 @@
         static Repository()
         {
             //deneme verileri burada olacak
-            _categories.Add(new Category {CategoryId =1, Name= "Telefon"});
+            _categories.Add(new Category { CategoryId = 1, Name = "Telefon" });
             _categories.Add(new Category { CategoryId = 2, Name = "Bilgisayar" });
 
-            _products.Add(new Product { ProductId= 1, Name = "Iphone 14", Price= 4000, IsActive=true, Image= "14grey.jpg", CategoryId = 1 });
+            _products.Add(new Product { ProductId = 1, Name = "Iphone 14", Price = 4000, IsActive = true, Image = "14grey.jpg", CategoryId = 1 });
             _products.Add(new Product { ProductId = 2, Name = "Iphone 14", Price = 4900, IsActive = true, Image = "14blue.jpg", CategoryId = 1 });
             _products.Add(new Product { ProductId = 3, Name = "Iphone 12", Price = 2000, IsActive = true, Image = "12green.jpg", CategoryId = 1 });
             _products.Add(new Product { ProductId = 4, Name = "Iphone 14", Price = 4900, IsActive = true, Image = "14white.jpg", CategoryId = 1 });
@@ -29,6 +29,10 @@
             {
                 return _products; // private onlanı sadece okumak için açıyor publicte
             }
+        }
+        public static void CreateProduct(Product entity)
+        {
+            _products.Add(entity);
         }
         public static List<Category> Categories
         {
