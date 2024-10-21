@@ -5,12 +5,14 @@ namespace Form_Page.Models
     public class Product
     {
         [Display(Name="Urun Id")]
-        [Required]
+        [Required(ErrorMessage ="Hatalı isim")]
         public int ProductId { get; set; }
         [Display(Name = "Urun Adı")]
 
         [Required]
+        [StringLength(50)] // 100 karakter sınırlaması 
         public string? Name { get; set; }
+        [Range(0,10000)] //fiyat için kısıtlama verdi
         [Display(Name = "Urun Fiyatı")]
 
         public decimal Price { get; set; }

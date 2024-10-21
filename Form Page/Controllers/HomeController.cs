@@ -1,4 +1,5 @@
 ﻿using Form_Page.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
@@ -55,11 +56,20 @@ namespace Form_Page.Controllers
             ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
             return View();
         }
+
+
+
         [HttpPost]
         public IActionResult Create(Product model)
         {
-            Repository.CreateProduct(model);
-            return RedirectToAction("Index"); // sayfanın view i çalışmıyor da index sayfasını döndürüyor.
+            if (ModelState.IsValid)  /*isvalid özelliği product modeldeki her şeyin kuralına uygun gelip gelmediğini kontrol eder*/
+            {
+                model.ProductId = Repository.Products.Count + 1;
+                Repository.CreateProduct(model);
+                return RedirectToAction("Index"); // sayfanın view i çalışmıyor da index sayfasını döndürüyor.
+            }
+            ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
+            return View(model); //eğer her şey yolunda değilse aynı sayfa yazdıklarıyla birlikte tekrar ona dönecek
         }
     }
 }
