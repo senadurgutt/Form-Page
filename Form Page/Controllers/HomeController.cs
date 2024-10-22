@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Diagnostics;
+using System.IO;
 
 namespace Form_Page.Controllers
 {
@@ -75,20 +76,69 @@ namespace Form_Page.Controllers
                 }
             }
             if (ModelState.IsValid)  /*isvalid özelliği product modeldeki her şeyin kuralına uygun gelip gelmediğini kontrol eder*/
+            {
+                if(imageFile != null) 
                 {
                     using (var stream = new FileStream(path, FileMode.Create)) //using ifadesi doşya akışı açılır ve kullanıldıktan sonra kapanır
                     { //filestream dosyaya veri yazmak ve okumak için kullanılr
                         await imageFile.CopyToAsync(stream);
                     }
-
+                
                     model.Image = randomFileName;
-                    model.ProductId = Repository.Products.Count + 1;
+                }
+                model.ProductId = Repository.Products.Count + 1;
                     Repository.CreateProduct(model);
                     return RedirectToAction("Index"); // sayfanın view i çalışmıyor da index sayfasını döndürüyor.
-                }
+        }
                 ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
                 return View(model); //eğer her şey yolunda değilse aynı sayfa yazdıklarıyla birlikte tekrar ona dönecek
+            
+        }
+        public IActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
             }
+
+            var entity = Repository.Products.FirstOrDefault(p => p.ProductId == id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
+            return View(entity);
         }
     
+    [HttpPost]
+        public async Task<IActionResult> Edit(int id, Product model, IFormFile? imageFile)
+        {
+            if(id != model.ProductId)
+            {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
+            {
+
+                if (imageFile != null)
+                {
+                    var extension = Path.GetExtension(imageFile.FileName);
+                    var randomFileName = string.Format($"{Guid.NewGuid().ToString()}{extension}");  // extension yerine .jpg de yazabilirdin 
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", randomFileName); //Directory.GetCurrentDirectory() kalıp olarak bulunduğum dizine gelir root olarak da görseller wwwroot/img altında olduğu için arkasından da kaydedilmesi için dosya ismini alıyoruz
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await imageFile.CopyToAsync(stream);
+                    }
+                    model.Image = randomFileName;
+                }
+                Repository.UpdateProduct(model);
+
+                return RedirectToAction("Index"); // Başarılı edit işleminden sonra index sayfasına yönlendir
+            }
+            ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
+    return View(model);
+        
+        }
+    }  
 }

@@ -12,7 +12,7 @@ namespace Form_Page.Models
         [Required]
         [StringLength(50)] // 100 karakter sınırlaması 
         public string? Name { get; set; }
-        [Range(0,10000)] //fiyat için kısıtlama verdi
+        [Range(0,1000000)] //fiyat için kısıtlama verdi
         [Display(Name = "Urun Fiyatı")]
 
         public decimal Price { get; set; }
