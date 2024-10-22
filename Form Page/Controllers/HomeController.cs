@@ -22,7 +22,7 @@ namespace Form_Page.Controllers
             if (!String.IsNullOrEmpty(searchString))
             {
                 ViewBag.SearchString = searchString; //arama yapılan kelimenin arama butonunda kalması için kullanılıyor
-                products = products.Where(p=> p.Name.Contains(searchString)).ToList();
+                products = products.Where(p=> p.Name!.Contains(searchString)).ToList();
 
 //                ürün listesini filtreler.products içindeki her bir ürünün Name(isim) özelliği, kullanıcının girdiği searchString ifadesini içeriyorsa, o ürün listede kalır.
 //                Contains(searchString): Arama terimi, ürün isminin içinde geçiyor mu diye kontrol eder.
@@ -60,7 +60,7 @@ namespace Form_Page.Controllers
 
 
         [HttpPost]
-        public IActionResult Create(Product model)
+        public IActionResult Create(Product model, IFormFile imageFile)
         {
             if (ModelState.IsValid)  /*isvalid özelliği product modeldeki her şeyin kuralına uygun gelip gelmediğini kontrol eder*/
             {
