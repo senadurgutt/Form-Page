@@ -113,7 +113,7 @@ namespace Form_Page.Controllers
     [HttpPost]
         public async Task<IActionResult> Edit(int id, Product model, IFormFile? imageFile)
         {
-            if(id != model.ProductId)
+            if(id == model.ProductId)
             {
                 return NotFound();
             }
@@ -132,12 +132,12 @@ namespace Form_Page.Controllers
                     }
                     model.Image = randomFileName;
                 }
-                Repository.UpdateProduct(model);
+                Repository.EditProduct(model);
 
                 return RedirectToAction("Index"); // Başarılı edit işleminden sonra index sayfasına yönlendir
             }
             ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
-    return View(model);
+            return View(model);
         
         }
     }  

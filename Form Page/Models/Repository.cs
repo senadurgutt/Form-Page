@@ -19,9 +19,6 @@
 
             _products.Add(new Product { ProductId = 6, Name = "Macbook Air", Price = 8900, IsActive = true, Image = "14white.jpg", CategoryId = 2 });
             _products.Add(new Product { ProductId = 7, Name = "Macbook Pro", Price = 9100, IsActive = true, Image = "12purple.jpg", CategoryId = 2 });
-
-
-
         }
         public static List<Product> Products
         {
@@ -42,15 +39,17 @@
             }
         }
 
-        public static void EditProduct(Product updatedProduct) {
+        public static void EditProduct(Product updatedProduct) 
+        {
             var entity = _products.FirstOrDefault(p => p.ProductId == updatedProduct.ProductId);
             if (entity != null)
             {
                 entity.Name = updatedProduct.Name;
                 entity.Price = updatedProduct.Price;
-                entity.CategoryId = updatedProduct.CategoryId;
                 entity.Image = updatedProduct.Image;
+                entity.CategoryId = updatedProduct.CategoryId;
+                entity.IsActive = updatedProduct.IsActive;
             }
-
     }
+}
 }
