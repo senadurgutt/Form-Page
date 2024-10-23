@@ -1,4 +1,5 @@
 ﻿using Form_Page.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -63,13 +64,13 @@ namespace Form_Page.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Product model, IFormFile imageFile) //productlar model içerisine kayıt edildiği için form file için başka bir şey açman gerekiyordu onu da böyle kaydetmek için bu şekilde yazdık
         {
-            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png"};
-            var extension = Path.GetExtension(imageFile.FileName);
-            var randomFileName = string.Format($"{Guid.NewGuid().ToString()}{extension}");  // extension yerine .jpg de yazabilirdin 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", randomFileName); //Directory.GetCurrentDirectory() kalıp olarak bulunduğum dizine gelir root olarak da görseller wwwroot/img altında olduğu için arkasından da kaydedilmesi için dosya ismini alıyoruz
-
+            var extension = "";
+            
             if (imageFile != null)
             {
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png" };
+                extension = Path.GetExtension(imageFile.FileName);
+
                 if (!allowedExtensions.Contains(extension))
                 {
                     ModelState.AddModelError("", "Geçerli resim seçiniz");
@@ -79,16 +80,19 @@ namespace Form_Page.Controllers
             {
                 if(imageFile != null) 
                 {
+                    var randomFileName = string.Format($"{Guid.NewGuid().ToString()}{extension}");  // extension yerine .jpg de yazabilirdin 
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/img", randomFileName); //Directory.GetCurrentDirectory() kalıp olarak bulunduğum dizine gelir root olarak da görseller wwwroot/img altında olduğu için arkasından da kaydedilmesi için dosya ismini alıyoruz
                     using (var stream = new FileStream(path, FileMode.Create)) //using ifadesi doşya akışı açılır ve kullanıldıktan sonra kapanır
                     { //filestream dosyaya veri yazmak ve okumak için kullanılr
                         await imageFile.CopyToAsync(stream);
                     }
                 
                     model.Image = randomFileName;
-                }
-                model.ProductId = Repository.Products.Count + 1;
+                    model.ProductId = Repository.Products.Count + 1;
                     Repository.CreateProduct(model);
                     return RedirectToAction("Index"); // sayfanın view i çalışmıyor da index sayfasını döndürüyor.
+                }
+                
         }
                 ViewBag.Categories = new SelectList(Repository.Categories, "CategoryId", "Name");
                 return View(model); //eğer her şey yolunda değilse aynı sayfa yazdıklarıyla birlikte tekrar ona dönecek
@@ -140,5 +144,22 @@ namespace Form_Page.Controllers
             return View(model);
         
         }
+        public IActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var entity = Repository.Products.FirstOrDefault(p => p.ProductId == id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            Repository.DeleteProduct(entity);   
+            return RedirectToAction("Index");
+        }
+
+
     }  
+    
 }
