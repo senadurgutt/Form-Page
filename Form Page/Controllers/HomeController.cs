@@ -159,6 +159,16 @@ namespace Form_Page.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public IActionResult EditProducts(List<Product> Products)
+        {
+            foreach(var product in Products)
+            {
+                Console.WriteLine($"ProductId: {product.ProductId}, IsActive: {product.IsActive}");
+                Repository.EditIsActive(product);
+            }
+            return RedirectToAction("Index");  
+        }
 
     }  
     
